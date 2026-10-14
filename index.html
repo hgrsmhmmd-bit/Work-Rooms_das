@@ -481,6 +481,7 @@
     11) البيانات الافتراضية
     يوسف هو أول حجرة ومميز كـ leader داخل نفس الشبكة.
   ========================================================= */
+  const STORE='jojo-final-dashboard-v2';
   const defaults=[
     {id:'boss',name:'يوسف',gender:'boy',state:'active',tasks:5,domain:'all',look:'bunGlasses',leader:true},
     {id:1,name:'إسلام',gender:'boy',state:'leave',tasks:0,domain:'perf',look:'glasses'},
@@ -488,7 +489,6 @@
     {id:3,name:'زغلول',gender:'boy',state:'active',tasks:1,domain:'audio',look:'glasses'},
     {id:4,name:'هاجر س',gender:'girl',state:'sleep',tasks:0,domain:'visual',look:'bun'},
     {id:5,name:'هاجر أ',gender:'girl',state:'active',tasks:2,domain:'perf',look:'bunGlasses'},
-    {id:6,name:'أماني',gender:'girl',state:'sleep',tasks:0,domain:'audio',look:'glasses'},
     {id:7,name:'ندى',gender:'girl',state:'active',tasks:1,domain:'visual',look:'bun'},
     {id:8,name:'ديانا',gender:'girl',state:'leave',tasks:0,domain:'audio',look:'normal'},
     {id:9,name:'ميريام',gender:'girl',state:'meeting',tasks:2,domain:'perf',look:'bun'},
@@ -510,14 +510,17 @@
   /* تحميل البيانات من المتصفح، ولو مفيش نستخدم البيانات الافتراضية */
   function loadRooms(){
     try{
-      const saved=JSON.parse(localStorage.getItem('jojo-final-dashboard-v1')||'null');
+      const saved=JSON.parse(localStorage.getItem(STORE)||'null');
       if(Array.isArray(saved)) return saved.map(hydrate);
+      /* old saved data from the first version: keep it, without the removed room (id 6) */
+      const old=JSON.parse(localStorage.getItem('jojo-final-dashboard-v1')||'null');
+      if(Array.isArray(old)) return old.filter(r=>String(r.id)!=='6').map(hydrate);
     }catch(e){}
     return defaults.map(hydrate);
   }
 
   /* حفظ البيانات في المتصفح */
-  function save(){localStorage.setItem('jojo-final-dashboard-v1',JSON.stringify(rooms))}
+  function save(){try{localStorage.setItem(STORE,JSON.stringify(rooms))}catch(e){}}
 
   /* رسم مربع Pixel */
   function px(ctx,x,y,w,h,color){ctx.fillStyle=color;ctx.fillRect(x,y,w,h)}
